@@ -48,11 +48,14 @@ class Order(models.Model):
     
     def full_address(self):
         return f'{self.address_line_1} {self.address_line_2}'
-
-    def __str__(self):
-        return self.full_name
     
+    def __str__(self):
+        return f'{self.last_name}, {self.first_name}'
 
+    # def __str__(self):
+    #     return self.first_name
+    
+# Shopping Cart Order Product
 
 class OrderProduct(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)

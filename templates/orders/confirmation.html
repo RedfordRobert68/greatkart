@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="section-content padding-y">
+	<div class="container">
+        <div class="order-confirm-details pb-5 ms-4">
+            {% if payment_status == 'success' %}
+                <p class="title-semibold-italic-orange">
+                    Order confirmed
+                </p>
+                <p class="heading-1-black mt-3 confirm-order-id">
+                    Your order is confirmed with order id: <span class="heading-1-semibold-italic-orange">{{ order.order_id }}</span>
+                </p>
+                <p class="heading-1-black mt-3 confirm-order-id">
+                    Current Order Status: <span class="heading-1-semibold-italic-orange">Under Process</span>
+                </p>
+                <a href="{% url 'dashboard' %}" class="simple-btn confirm-action-btn heading-3-regular-white text-center">
+                    View All Orders
+                </a>
+                <a href="" class="simple-btn confirm-action-btn heading-3-regular-white">
+
+                </a>
+            {% else %}
+                <p>
+                    Something went wrong. Please try again.
+                </p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

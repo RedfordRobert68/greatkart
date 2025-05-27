@@ -25,10 +25,22 @@
 <link href="{% static 'css/ui.css' %}" rel="stylesheet" type="text/css"/>
 <link href="{% static 'css/responsive.css' %}" rel="stylesheet" media="only screen and (max-width: 1200px)" />
 
+<!-- Paypal Styles -->
+<!-- <link rel="stylesheet" type="text/css" href="css/cardfields.css" /> -->
+
 <!-- custom javascript -->
 <script src="{% static 'js/script.js' %}" type="text/javascript"></script>
 
-<script type="text/javascript">
+<!--Paypal script-->
+<script
+    src="https://www.paypal.com/sdk/js?client-id=AQeFRi3dWNo4sQRWC7moW1gJ_64zbj9zIcvKAuNB5Q3j4YdxXuVLLG4t-S98yN4qnqfPP55zfER2WVbb&buyer-country=US&currency=USD&components=buttons&disable-funding=venmo,paylater&enable-funding=card"
+    data-sdk-integration-source="developer-studio">
+</script>
+
+
+<!-- <script src="{% static 'js/app.js' %}"></script> -->
+
+<!--<script type="text/javascript">
 /// some script
 
 // jquery ready start
@@ -37,7 +49,7 @@ $(document).ready(function() {
 
 }); 
 // jquery end
-</script>
+</script>--
 
 </head>
 <body>

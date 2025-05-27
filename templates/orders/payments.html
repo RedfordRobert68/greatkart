@@ -4,7 +4,12 @@
 {% block content %}
     <!-- ============================ COMPONENT 1 ================================= -->
 <section class="section-content padding-y">
+    
 	<div class="container">
+    
+        <h4 class="text-center mb-10">
+            Review Your Order and Make Payment
+        </h4>
         <div class="row">
             <aside class="col-lg-8">
                 <div class="card">
@@ -39,7 +44,7 @@
                     <h5 class="card-header">Payment Method</h5>
                     <div class="card-body">
                         <p class="card-text">
-                            PayPal
+                            Paypal
                         </p>
                     </div>
                 </div>
@@ -94,6 +99,7 @@
             </aside> <!-- col.// -->
             <aside class="col-lg-4">
 
+
                 <div class="card">
                     <div class="card-body">
                         <dl class="dlist-align">
@@ -109,10 +115,29 @@
                             <dd class="text-right text-dark b"><strong>${{ grand_total }}</strong></dd>
                         </dl>
                         <hr>
+                        <!-- ********************************
+                        STRIPE Checkout 
+                        ***********************************-->
+                        <!-- <form action="{% url 'orders:create-checkout-session' %}" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="order-id" value="{{ order.id }}">
+                            <button type="submit" id="checkout-button" class="btn btn-primary btn-block">Checkout</button>
+                        </form> -->
+
+
+                        <!-- *****************************
+                        NEW PAYPAL Button 
+                        *********************************-->
                         <p class="text-center mb-3">
                             <img src="{% static './images/misc/payments.png' %}" height="26">
                         </p>
-                        <a href="{% url 'checkout' %}" class="btn btn-primary btn-block">Make Payment</a>
+                        
+                         <div id="paypal-button-container">
+                            <!-- Paypal button will load -->
+                         </div>
+                        <p id="result-message"></p>                  
+
+
                     </div> <!-- card-body.// -->
                 </div> <!-- card.// -->
 
@@ -123,4 +148,237 @@
 	<!-- ============================ COMPONENT 1 END .// ================================= -->
 	</div>
 </section>
+
+<script>
+    
+var amount = {{ grand_total }};
+
+const paypalButtons = window.paypal.Buttons({
+    style: {
+        shape: "rect",
+        layout: "vertical",
+        color: "blue",
+        label: "paypal",
+    },
+    message: {
+        amount: 100,
+    },
+
+    createOrder: function(data, actions) {
+        return actions.order.create({
+            purchase_units: [{
+                amount: {
+                    value: amount
+                }
+            }]
+        });
+    },
+
+    //Finalize the transaction
+    onApprove: function(data, actions) {
+        return actions.order.capture().then(function(details) {
+            //Show a success message to the buyer
+            console.log(details)
+            alert('Transaction completed by ' + details.payer.name.given_name + '!');
+        });
+    }
+   
+});
+paypalButtons.render("#paypal-button-container");
+
+
+// Example function to show a result to the user. Your site's UI library can be used instead.
+function resultMessage(message) {
+    const container = document.querySelector("#result-message");
+    container.innerHTML = message;
+}
+</script>
+
+
+
+<!-- <script>
+
+    // CSRF Token for Javascript
+    function getCookie(name) {
+        let cookieValue = null;
+        if(document.cookie && document.cookie !==''){
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim()
+
+                // Does this cookie string begin with the name we want?
+                if(cookie.substring(0, name.length + 1)===(name + '=')){
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    var amount = "{{ grand_total }}"
+    var url = "{% url 'orders:payments' %}"
+    var csrftoken = getCookie('csrftoken');
+    var orderID = "{{ order.order_number }}";
+    var payment_method = 'Stripe';
+
+    // Render the Stripe button into #paypal-button-container
+    stripe.Buttons({
+        //Set up the transaction
+        createOrder: function(data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: amount,
+                    }
+                }]
+            });
+        },
+
+        // Finalize the transaction
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(details) {
+                // Show a success message to the buyer
+                console.log(customer_details);
+                sendData();
+                // alert('Transaction completed by' + details.payer.name.given_name + '!');
+
+                function sendData(){
+                    fetch(url, {
+                        method: "POST", 
+                        headers: {
+                            "Content-type":"application/json",
+                            "X-CSRFToken": "csrftoken",
+                        },
+
+                        // Check into the properties
+                        body:JSON.stringify({
+                            orderID: orderID, 
+                            transID: customer_details.id,
+                            payment_method: payment_method,
+                            status: details.status,
+                        }),
+                    })
+                    // .then(response => response.json())
+                    // .then(data => console.log(data));
+                }
+            });
+        }
+    }).render('#checkout-button')
+
+</script> -->
+
+<!--**********************************************
+Paypal Scripts
+************************************************-->
+
+<!-- <script>
+    window.paypal
+    .Buttons({
+        style: {
+            shape: "rect",
+            layout: "vertical",
+            color: "gold",
+            label: "paypal",
+        },
+        message: {
+            amount: 100,
+        },
+
+        async createOrder() {
+            try {
+                const response = await fetch("/api/orders", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    // use the "body" param to optionally pass additional order information
+                    // like product ids and quantities
+                    body: JSON.stringify({
+                        cart: [
+                        {
+                            id: "YOUR_PRODUCT_ID",
+                            quantity: "YOUR_PRODUCT_QUANTITY",
+                        },
+                        ],
+                    }),
+                });
+
+                const orderData = await response.json();
+
+                if (orderData.id) {
+                    return orderData.id;
+                }
+                const errorDetail = orderData?.details?.[0];
+                const errorMessage = errorDetail ? `${errorDetail.issue} ${errorDetail.description} (${orderData.debug_id})` : JSON.stringify(orderData);
+
+                throw new Error(errorMessage);
+            } catch (error) {
+                console.error(error);
+                resultMessage(`Could not initiate PayPal Checkout...<br><br>${error}`);
+            }
+        },
+
+        async onApprove(data, actions) {
+            try {
+                const response = await fetch(`/api/orders/${data.orderID}/capture`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                const orderData = await response.json();
+                // Three cases to handle:
+                //   (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
+                //   (2) Other non-recoverable errors -> Show a failure message
+                //   (3) Successful transaction -> Show confirmation or thank you message
+
+                const errorDetail = orderData?.details?.[0];
+
+                if (errorDetail?.issue === "INSTRUMENT_DECLINED") {
+                // (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
+                // recoverable state, per
+                // https://developer.paypal.com/docs/checkout/standard/customize/handle-funding-failures/
+                return actions.restart();
+                } else if (errorDetail) {
+                // (2) Other non-recoverable errors -> Show a failure message
+                    throw new Error(`${errorDetail.description} (${orderData.debug_id})`);
+                } else if (!orderData.purchase_units) {
+                    throw new Error(JSON.stringify(orderData));
+                } else {
+                // (3) Successful transaction -> Show confirmation or thank you message
+                // Or go to another URL:  actions.redirect('thank_you.html');
+                    const transaction =
+                        orderData?.purchase_units?.[0]?.payments?.captures?.[0] ||
+                        orderData?.purchase_units?.[0]?.payments?.authorizations?.[0];
+                    resultMessage(
+                        `Transaction ${transaction.status}: ${transaction.id}<br>
+                        <br>See console for all available details`
+                    );
+                    console.log(
+                        "Capture result",
+                        orderData,
+                        JSON.stringify(orderData, null, 2)
+                    );
+                }
+            } catch (error) {
+                console.error(error);
+                resultMessage(
+                `Sorry, your transaction could not be processed...<br><br>${error}`
+                );
+            }
+        },
+    })
+  .render("#paypal-button-container");
+
+// Example function to show a result to the user. Your site's UI library can be used instead.
+function resultMessage(message) {
+  const container = document.querySelector("#result-message");
+  container.innerHTML = message;
+}
+
+</script> -->
+
+
 {% endblock %}

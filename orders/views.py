@@ -1,15 +1,58 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
+from django.core.mail import send_mail
 from carts.models import CartItem
 from .forms import OrderForm
 import datetime
-from .models import Order
+from .models import Order, Payment
 from django.http import HttpResponse
+from django.views import View
+import json
 
-# Create your views here.
+# STRIPE
+import stripe
+stripe.api_version = '2024-10-28.acacia'
+from django.conf import settings
+from django.views import generic
+from django.views.decorators.csrf import csrf_exempt
+import datetime
 
+stripe.api_key = settings.STRIPE_SECRET_KEY
+endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
 
 def payments(request):
+    
+    body = json.loads(request.body)
+    order = Order.objects.get(user=request.user, is_ordered=False, order_number=body['id'])
+    print(body)
+    #Store transaction details inside Payment model
+    payment = Payment(
+        user = request.user,
+        payment_id = body['id'],
+        payment_method = body['payment_method.payment_method_details.card.brand'],
+        amount_paid = order.order_total,
+        status = body['status'],
+    )
+    
+    payment.save()
+
+    order.payment = payment
+    order.is_ordered = True
+    order.save()
+
+    
     return render(request, 'orders/payments.html')
+
+def paymentSuccess(request):
+    context = {
+        'payment_status' : 'success', 
+    }
+    return render(request, 'orders/confirmation.html', context)
+
+def paymentCancel(request):
+    context = {
+        'payment_status' : 'cancel'
+    }
+    return render(request, 'orders/confirmation.html', context)
 
 
 def place_order(request, total=0, quantity=0):
@@ -76,3 +119,127 @@ def place_order(request, total=0, quantity=0):
             return render(request, 'orders/payments.html', context)
         else:
             return redirect('checkout')
+        
+
+# for payments
+
+class CreateCheckoutSessionView(generic.View):
+    def post(self, request, *args, **kwargs):    
+        host = self.request.get_host()
+        order_id = self.request.POST.get('order-id')
+        order = Order.objects.get(id=order_id)
+
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[
+                {
+                   'price_data': {
+                       'currency': 'usd',
+                       'unit_amount': int(order.order_total * 100), 
+                       'product_data': {
+                           'name': order.order_number,
+                           # 'images': ['https://i.imgur.com/EHyR2nP.png'],
+                       },
+                   },
+                   'quantity' : 1,
+                },
+            ],
+            metadata = {
+                "order_id": order.id,
+            },
+            mode='payment',
+            # success_url="http://localhost:8000/orders/payment-success",
+            # cancel_url="http://localhost:8000/orders/payment-cancel",
+            success_url="http://{}{}".format(host,reverse('orders:payment-success')),
+            cancel_url="http://{}{}".format(host,reverse('orders:payment-cancel')),
+            # automatic_tax={'enabled': True},
+        )
+        return redirect(checkout_session.url, code=303)
+    
+
+
+# Using Django
+@csrf_exempt
+def my_webhook_view(request):
+    payload = request.body
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    event = None
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
+        )
+    except ValueError as e:
+        # Invalid payload
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        return HttpResponse(status=400)
+
+    # Handle the checkout.session.completed event
+
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+
+        customer_email = session["customer_details"]["email"]
+        # order_id = ["metadata"]["order_id"]
+        # order = Order.objects.get(id=order_id)
+
+        send_mail(
+            subject="Here is your order number",
+            message="Here is your order. Thank you for your purchase.",
+            recipient_list=[customer_email], 
+            from_email="bob@bob.com"
+        )
+
+        print(session)
+
+        #TODO - Decide whether or not to send files
+
+    #     if session.payment_status == "paid":
+    #         # Fulfill the purchase
+    #         # line_item = session.list_line_items(session.id, limit=1).data[0]
+    #         # order_id = line_item['description']
+    #         fulfill_order()
+
+    # # Passed signature verification
+        # fullfill_order(session)
+        # print(session)
+    return HttpResponse(status=200)
+    
+
+# class StripeIntentView(View):
+#     def post(self, request, *args, **kwargs):
+#         host = self.request.get_host()
+#         try:
+#             req_json = json.loads(request.body)
+#             customer = stripe.Customer.create(email=req_json['email'])
+#             order_id = self.request.POST.get('order-id')
+#             order = Order.objects.get(id=order_id)
+#             intent = stripe.PaymentIntent.create(
+#                 amount=int(order.order_total * 100),
+#                 currency='usd',
+#                 customer=customer['id'],
+#                 metadata={
+#                     "order_id": order.id
+#                 }
+#             )
+#             return JsonResponse({
+#                 'clientSecret': intent['client_secret']
+#             })
+#         except Exception as e:
+#             return JsonResponse({ 'error': str(e) })
+
+# def fulfill_checkout():
+#     pass
+    # order = Order.objects.get(id=order_id)
+    # order.ordered = True
+    # order.orderedDate = datetime.datetime.now()
+    # order.save()
+
+    # for item in order.items.all():
+    #     product_var = ProductVariation.objects.get(id=item.product.id)
+    #     product_var.stock -= item.quantity
+    #     product_var.save
+
+
