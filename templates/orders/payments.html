@@ -115,14 +115,6 @@
                             <dd class="text-right text-dark b"><strong>${{ grand_total }}</strong></dd>
                         </dl>
                         <hr>
-                        <!-- ********************************
-                        STRIPE Checkout 
-                        ***********************************-->
-                        <!-- <form action="{% url 'orders:create-checkout-session' %}" method="POST">
-                            {% csrf_token %}
-                            <input type="hidden" name="order-id" value="{{ order.id }}">
-                            <button type="submit" id="checkout-button" class="btn btn-primary btn-block">Checkout</button>
-                        </form> -->
 
 
                         <!-- *****************************
@@ -150,8 +142,30 @@
 </section>
 
 <script>
+
+// using jQuery
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+  
     
-var amount = {{ grand_total }};
+var amount = "{{ grand_total }}";
+var url = "{% url 'orders:payments' %}";
+var csrftoken = getCookie('csrftoken');
+var orderID = "{{ order.order_number }}";
+var payment_method = 'Paypal';
 
 const paypalButtons = window.paypal.Buttons({
     style: {
@@ -178,8 +192,27 @@ const paypalButtons = window.paypal.Buttons({
     onApprove: function(data, actions) {
         return actions.order.capture().then(function(details) {
             //Show a success message to the buyer
-            console.log(details)
-            alert('Transaction completed by ' + details.payer.name.given_name + '!');
+            console.log(details);
+            sendData();
+            function sendData() {
+                fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-type": "application/json",
+                        // Search generate csrf token on Javascript
+                        "X-CSRFToken": csrftoken,
+                    },
+                    body: JSON.stringify({
+                        orderID: orderID,
+                        transID: details.id,
+                        payment_method: payment_method,
+                        status: details.status,
+                    }),
+                })
+                    //.then(response => response.json())
+    		        //.then(data => console.log(data))
+
+            }
         });
     }
    

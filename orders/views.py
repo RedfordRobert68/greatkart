@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from carts.models import CartItem
 from .forms import OrderForm
@@ -6,29 +6,30 @@ import datetime
 from .models import Order, Payment
 from django.http import HttpResponse
 from django.views import View
+# from django.urls import reverse
 import json
 
 # STRIPE
-import stripe
-stripe.api_version = '2024-10-28.acacia'
-from django.conf import settings
-from django.views import generic
-from django.views.decorators.csrf import csrf_exempt
-import datetime
+# import stripe
+# stripe.api_version = '2024-10-28.acacia'
+# from django.conf import settings
+# from django.views import generic
+# from django.views.decorators.csrf import csrf_exempt
+# import datetime
 
-stripe.api_key = settings.STRIPE_SECRET_KEY
-endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
+# stripe.api_key = settings.STRIPE_SECRET_KEY
+# endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
 
 def payments(request):
-    
     body = json.loads(request.body)
-    order = Order.objects.get(user=request.user, is_ordered=False, order_number=body['id'])
     print(body)
-    #Store transaction details inside Payment model
+    order = Order.objects.get(user=request.user, is_ordered=False, order_number=body['orderID'])
+    
+    # #Store transaction details inside Payment model
     payment = Payment(
         user = request.user,
-        payment_id = body['id'],
-        payment_method = body['payment_method.payment_method_details.card.brand'],
+        payment_id = body['transID'],
+        payment_method = body['payment_method'],
         amount_paid = order.order_total,
         status = body['status'],
     )
@@ -42,17 +43,17 @@ def payments(request):
     
     return render(request, 'orders/payments.html')
 
-def paymentSuccess(request):
-    context = {
-        'payment_status' : 'success', 
-    }
-    return render(request, 'orders/confirmation.html', context)
+# def paymentSuccess(request):
+#     context = {
+#         'payment_status' : 'success', 
+#     }
+#     return render(request, 'orders/confirmation.html', context)
 
-def paymentCancel(request):
-    context = {
-        'payment_status' : 'cancel'
-    }
-    return render(request, 'orders/confirmation.html', context)
+# def paymentCancel(request):
+#     context = {
+#         'payment_status' : 'cancel'
+#     }
+#     return render(request, 'orders/confirmation.html', context)
 
 
 def place_order(request, total=0, quantity=0):
@@ -123,76 +124,76 @@ def place_order(request, total=0, quantity=0):
 
 # for payments
 
-class CreateCheckoutSessionView(generic.View):
-    def post(self, request, *args, **kwargs):    
-        host = self.request.get_host()
-        order_id = self.request.POST.get('order-id')
-        order = Order.objects.get(id=order_id)
+# class CreateCheckoutSessionView(generic.View):
+#     def post(self, request, *args, **kwargs):    
+#         host = self.request.get_host()
+#         order_id = self.request.POST.get('order-id')
+#         order = Order.objects.get(id=order_id)
 
-        checkout_session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=[
-                {
-                   'price_data': {
-                       'currency': 'usd',
-                       'unit_amount': int(order.order_total * 100), 
-                       'product_data': {
-                           'name': order.order_number,
-                           # 'images': ['https://i.imgur.com/EHyR2nP.png'],
-                       },
-                   },
-                   'quantity' : 1,
-                },
-            ],
-            metadata = {
-                "order_id": order.id,
-            },
-            mode='payment',
-            # success_url="http://localhost:8000/orders/payment-success",
-            # cancel_url="http://localhost:8000/orders/payment-cancel",
-            success_url="http://{}{}".format(host,reverse('orders:payment-success')),
-            cancel_url="http://{}{}".format(host,reverse('orders:payment-cancel')),
-            # automatic_tax={'enabled': True},
-        )
-        return redirect(checkout_session.url, code=303)
+#         checkout_session = stripe.checkout.Session.create(
+#             payment_method_types=['card'],
+#             line_items=[
+#                 {
+#                    'price_data': {
+#                        'currency': 'usd',
+#                        'unit_amount': int(order.order_total * 100), 
+#                        'product_data': {
+#                            'name': order.order_number,
+#                            # 'images': ['https://i.imgur.com/EHyR2nP.png'],
+#                        },
+#                    },
+#                    'quantity' : 1,
+#                 },
+#             ],
+#             metadata = {
+#                 "order_id": order.id,
+#             },
+#             mode='payment',
+#             # success_url="http://localhost:8000/orders/payment-success",
+#             # cancel_url="http://localhost:8000/orders/payment-cancel",
+#             success_url="http://{}{}".format(host,reverse('orders:payment-success')),
+#             cancel_url="http://{}{}".format(host,reverse('orders:payment-cancel')),
+#             # automatic_tax={'enabled': True},
+#         )
+#         return redirect(checkout_session.url, code=303)
     
 
 
 # Using Django
-@csrf_exempt
-def my_webhook_view(request):
-    payload = request.body
-    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
-    event = None
+# @csrf_exempt
+# def my_webhook_view(request):
+#     payload = request.body
+#     sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+#     event = None
 
-    try:
-        event = stripe.Webhook.construct_event(
-            payload, sig_header, endpoint_secret
-        )
-    except ValueError as e:
-        # Invalid payload
-        return HttpResponse(status=400)
-    except stripe.error.SignatureVerificationError as e:
-        # Invalid signature
-        return HttpResponse(status=400)
+#     try:
+#         event = stripe.Webhook.construct_event(
+#             payload, sig_header, endpoint_secret
+#         )
+#     except ValueError as e:
+#         # Invalid payload
+#         return HttpResponse(status=400)
+#     except stripe.error.SignatureVerificationError as e:
+#         # Invalid signature
+#         return HttpResponse(status=400)
 
-    # Handle the checkout.session.completed event
+#     # Handle the checkout.session.completed event
 
-    if event['type'] == 'checkout.session.completed':
-        session = event['data']['object']
+#     if event['type'] == 'checkout.session.completed':
+#         session = event['data']['object']
 
-        customer_email = session["customer_details"]["email"]
-        # order_id = ["metadata"]["order_id"]
-        # order = Order.objects.get(id=order_id)
+#         customer_email = session["customer_details"]["email"]
+#         # order_id = ["metadata"]["order_id"]
+#         # order = Order.objects.get(id=order_id)
 
-        send_mail(
-            subject="Here is your order number",
-            message="Here is your order. Thank you for your purchase.",
-            recipient_list=[customer_email], 
-            from_email="bob@bob.com"
-        )
+#         send_mail(
+#             subject="Here is your order number",
+#             message="Here is your order. Thank you for your purchase.",
+#             recipient_list=[customer_email], 
+#             from_email="bob@bob.com"
+#         )
 
-        print(session)
+#         print(session)
 
         #TODO - Decide whether or not to send files
 
@@ -205,7 +206,7 @@ def my_webhook_view(request):
     # # Passed signature verification
         # fullfill_order(session)
         # print(session)
-    return HttpResponse(status=200)
+    # return HttpResponse(status=200)
     
 
 # class StripeIntentView(View):

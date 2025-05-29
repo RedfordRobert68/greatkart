@@ -8,9 +8,9 @@ urlpatterns = [
     path('payments/', views.payments, name='payments'),
     # path('checkout/', views.checkout, name='checkout'), # Removed for Stripe Version 2
 
-    path('create-checkout-session', views.CreateCheckoutSessionView.as_view(), name='create-checkout-session'),
-    path('payment-success/', views.paymentSuccess, name='payment-success'),
-    path('payment-cancel/', views.paymentCancel, name='payment-cancel'),
-    path('webhook/stripe', views.my_webhook_view, name='webhook-stripe'),
+    # path('create-checkout-session', views.CreateCheckoutSessionView.as_view(), name='create-checkout-session'),
+    # path('payment-success/', views.paymentSuccess, name='payment-success'),
+    # path('payment-cancel/', views.paymentCancel, name='payment-cancel'),
+    # path('webhook/stripe', views.my_webhook_view, name='webhook-stripe'),
 
 ]
