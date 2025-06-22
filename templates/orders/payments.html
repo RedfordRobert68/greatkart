@@ -166,6 +166,7 @@ var url = "{% url 'orders:payments' %}";
 var csrftoken = getCookie('csrftoken');
 var orderID = "{{ order.order_number }}";
 var payment_method = 'Paypal';
+var redirect_url = "{% url 'orders:order_complete' %}"
 
 const paypalButtons = window.paypal.Buttons({
     style: {
@@ -209,8 +210,10 @@ const paypalButtons = window.paypal.Buttons({
                         status: details.status,
                     }),
                 })
-                    //.then(response => response.json())
-    		        //.then(data => console.log(data))
+                    .then((response) => response.json())
+    		        .then((data) => {
+                        window.location.href = redirect_url+'?order_number='+data.order_number+'&payment_id='+data.transID;
+                    });
 
             }
         });

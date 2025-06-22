@@ -6,6 +6,7 @@ app_name = 'orders'
 urlpatterns = [
     path('place_order/', views.place_order, name='place_order'),
     path('payments/', views.payments, name='payments'),
+    path('order_complete/', views.order_complete, name='order_complete'),
     # path('checkout/', views.checkout, name='checkout'), # Removed for Stripe Version 2
 
     # path('create-checkout-session', views.CreateCheckoutSessionView.as_view(), name='create-checkout-session'),

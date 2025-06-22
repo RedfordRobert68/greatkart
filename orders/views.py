@@ -4,7 +4,7 @@ from carts.models import CartItem
 from .forms import OrderForm
 import datetime
 from .models import Order, Payment, OrderProduct
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views import View
 from store.models import Product
 from django.template.loader import render_to_string
@@ -86,9 +86,12 @@ def payments(request):
 
 
     # Send order number and transaction id back to sendData method via JsonResponse
+    data = {
+        'order_number': order.order_number,
+        'transID': payment.payment_id,
+    }
 
-    
-    return render(request, 'orders/payments.html')
+    return JsonResponse(data)
 
 # def paymentSuccess(request):
 #     context = {
@@ -167,6 +170,9 @@ def place_order(request, total=0, quantity=0):
             return render(request, 'orders/payments.html', context)
         else:
             return redirect('checkout')
+        
+def order_complete(request):
+    return render(request, 'orders/order_complete.html')
         
 
 # for payments
