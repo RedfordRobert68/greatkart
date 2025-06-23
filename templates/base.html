@@ -24,6 +24,12 @@
 <!-- custom style -->
 <link href="{% static 'css/ui.css' %}" rel="stylesheet" type="text/css"/>
 <link href="{% static 'css/responsive.css' %}" rel="stylesheet" media="only screen and (max-width: 1200px)" />
+<link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css"/>
+<!-- CDN version -->
+<!-- For Font Awesome 6 Free (Web) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
 
 <!-- Paypal Styles -->
 <!-- <link rel="stylesheet" type="text/css" href="css/cardfields.css" /> -->
@@ -36,6 +42,42 @@
     src="https://www.paypal.com/sdk/js?client-id=AQeFRi3dWNo4sQRWC7moW1gJ_64zbj9zIcvKAuNB5Q3j4YdxXuVLLG4t-S98yN4qnqfPP55zfER2WVbb&buyer-country=US&currency=USD&components=buttons&disable-funding=venmo,paylater&enable-funding=card"
     data-sdk-integration-source="developer-studio">
 </script>
+
+<style>
+    
+{% comment %} .rate > input {
+    display: none;
+}
+
+.rate {
+    display: inline-block;
+    border: 0;
+}
+
+.rate > label {
+    float: right;
+}
+
+/* Showing the stars */
+
+.rate > label:before {
+    display: inline-block;
+    font-size: 1.1rem;
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    content: "\f005";
+    margin: 0;
+    padding: 0.3rem .2rem;
+    cursor: pointer;
+}
+
+.rate .half:before {
+    content: "\f089";
+    position: absolute;
+    padding-right: 0;
+} {% endcomment %}
+
+</style>
 
 
 <!-- <script src="{% static 'js/app.js' %}"></script> -->
