@@ -24,7 +24,7 @@
                                         <h4>
                                             {{ orders_count }}
                                         </h4>
-                                        <a href="">
+                                        <a href="{% url 'my_orders' %}">
                                             View Orders
                                         </a>
                                     </div>
@@ -33,7 +33,7 @@
                             <div class="col-md-6">
                                 <div class="card text-center">
                                     <div class="card-body">
-                                        <img class="rounded-circle" src="https://www.w3schools.com/howto/img_avatar.png" alt="User Profile Picture" width="50" height="50" style="border-radius: 50%;">
+                                        <img class="rounded-circle" src="{{ userprofile.profile_picture.url }}" alt="User Profile Picture" width="50" height="50" style="border-radius: 50%;">
                                     </div>
                                     <p class="mb-0">
                                         {{ user.email }}
