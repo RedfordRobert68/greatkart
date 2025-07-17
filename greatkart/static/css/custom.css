@@ -42,4 +42,22 @@ input:checked + label:hover, input:checked ~ label:hover, input:checked ~ label:
 
 .rating-star i {
   color: #ffb503;
+}
+
+/*********************************
+Product Detail Thumbnails
+*********************************/
+ul.thumb {
+  margin: 0 auto;
+  padding: 0;
+  float: left;
+}
+ul.thumb li {
+  list-style: none;
+  margin: 10px;
+}
+ul.thumb li img {
+  width: 80px;
+  height: 80px;
+  border: solid 1px #cecece;
 }/*# sourceMappingURL=custom.css.map */

@@ -156,7 +156,23 @@
                                     <div class="price-wrap mt-2">
                                         <span class="price">${{ product.price }}</span>
                                     </div> <!-- price-wrap.// -->
+                                    <div class="rating-star">
+                                        <span>
+                                            <i class="{% if product.averageReview >= 1 %}fa-solid fa-star{% elif product.averageReview >= 0.5 and product.averageReview < 1 %}fa-solid fa-star-half-stroke{% elif product.averageReview < 0.5 %}fa-regular fa-star{% endif %}" aria-hidden="true"></i>
+
+                                            <i class="{% if product.averageReview >= 2 %}fa-solid fa-star{% elif product.averageReview >= 1.5 and product.averageReview < 2 %}fa-solid fa-star-half-stroke{% elif product.averageReview < 1.5 %}fa-regular fa-star{% endif %}" aria-hidden="true"></i>
+
+                                            <i class="{% if product.averageReview >= 3 %}fa-solid fa-star{% elif product.averageReview >= 2.5 and product.averageReview < 3 %}fa-solid fa-star-half-stroke{% elif product.averageReview < 2.5 %}fa-regular fa-star{% endif %}" aria-hidden="true"></i>
+
+                                            <i class="{% if product.averageReview >= 4 %}fa-solid fa-star{% elif product.averageReview >= 3.5 and product.averageReview < 4 %}fa-solid fa-star-half-stroke{% elif product.averageReview < 3.5 %}fa-regular fa-star{% endif %}" aria-hidden="true"></i>
+
+                                            <i class="{% if product.averageReview == 5 %}fa-solid fa-star{% elif product.averageReview >= 4.5 and product.averageReview < 5 %}fa-solid fa-star-half-stroke{% elif product.averageReview < 4.5 %}fa-regular fa-star{% endif %}" aria-hidden="true"></i>
+
+                                        </span>
+                                    </div>
                                 </div>
+                                
+                                <br>
                                 <a href="{{ product.get_url }}" class="btn btn-block btn-primary">
                                     View Details
                                 </a>
