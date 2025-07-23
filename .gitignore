@@ -166,5 +166,7 @@ cython_debug/
 .vscode
 
 .ebextensions
+ebextension/
+.django.config
 
 
