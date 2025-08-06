@@ -44,7 +44,7 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY='same-origin-allow-popups'
 # DEBUG = env('DEBUG')
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['django-greatkart-env.eba-kjmqgsgp.us-west-2.elasticbeanstalk.com']
 
 
 # Application definition
@@ -134,7 +134,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/New_York'
 
 USE_I18N = True
 
@@ -196,4 +196,4 @@ EMAIL_BACKEND = config('EMAIL_BACKEND')
 PAYPAL_CLIENT_ID = config('PAYPAL_CLIENT_ID')
 PAYPAL_SECRET_ID = config('PAYPAL_SECRET_ID')
 
-DEFAULT_AUTO_FIELD='django.db.models.AutoField'
+# DEFAULT_AUTO_FIELD='django.db.models.AutoField'
