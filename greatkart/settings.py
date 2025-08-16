@@ -11,19 +11,20 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-from decouple import config
+# from decouple import config
 
 import os
+import environ
 
-# import environ
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# env = environ.Env(
-#     # set casting, default value
-#     DEBUG=(bool, False)
-# )
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
 
 # reading .env file
-# environ.Env.read_env()
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -33,16 +34,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = env('SECRET_KEY')
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = env('SECRET_KEY')
+# SECRET_KEY = config('SECRET_KEY')
 
 
 # Fixes empty popup modal when Paypal button is selected
 SECURE_CROSS_ORIGIN_OPENER_POLICY='same-origin-allow-popups'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = env('DEBUG')
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = env('DEBUG')
+# DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = []
 
@@ -178,12 +179,12 @@ SESSION_TIMEOUT_REDIRECT = '/accounts/login'
 # EMAIL_USE_TLS = True
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-EMAIL_HOST = config('EMAIL_HOST')
-EMAIL_PORT = config('EMAIL_PORT', cast=int)
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
-EMAIL_BACKEND = config('EMAIL_BACKEND')
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_PORT = env('EMAIL_PORT', cast=int)
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = env('EMAIL_USE_TLS', cast=bool)
+EMAIL_BACKEND = env('EMAIL_BACKEND')
 
 
 # Test email in terminal configuration
@@ -193,7 +194,7 @@ EMAIL_BACKEND = config('EMAIL_BACKEND')
 # STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
 # STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET')
 
-PAYPAL_CLIENT_ID = config('PAYPAL_CLIENT_ID')
-PAYPAL_SECRET_ID = config('PAYPAL_SECRET_ID')
+PAYPAL_CLIENT_ID = env('PAYPAL_CLIENT_ID')
+PAYPAL_SECRET_ID = env('PAYPAL_SECRET_ID')
 
 # DEFAULT_AUTO_FIELD='django.db.models.AutoField'

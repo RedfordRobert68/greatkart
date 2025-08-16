@@ -15,3 +15,17 @@ def home(request):
     }
 
     return render(request, 'home.html', context)
+
+
+
+
+
+from django.http import JsonResponse
+import os
+
+def env_test(request):
+    return JsonResponse({
+        "SECRET_KEY": os.environ.get("SECRET_KEY"),
+        "DEBUG": os.environ.get("DEBUG"),
+        "ALLOWED_HOSTS": os.environ.get("ALLOWED_HOSTS"),
+    })
