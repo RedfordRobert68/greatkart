@@ -20,8 +20,6 @@ from . import views
 from django.conf.urls.static import static
 from django.conf import settings
 
-from .views import env_test
-
 urlpatterns = [
     # path('admin/', views.fake_admin_login, name='fake_admin'),
     path('admin/', include('admin_honeypot.urls', namespace="admin_honeypot")),
@@ -33,7 +31,4 @@ urlpatterns = [
 
     # ORDERS
     path('orders/', include('orders.urls')),
-
-    # Test
-    path("env-test/", env_test),   # temporary check
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
