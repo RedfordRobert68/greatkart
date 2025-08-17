@@ -51,9 +51,16 @@ DEBUG = env.bool("DEBUG", default=False)
 # DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = [
-    ".elasticbeanstalk.com",
-    os.environ.get("DJANGO_ALLOWED_HOST", "localhost"),
+    ".elasticbeanstalk.com",  # allows EB environment URL
+    ".compute.amazonaws.com", # allows EC2/ELB internal checks
+    "localhost",
+    "127.0.0.1",
 ]
+
+# ALLOWED_HOSTS = [
+#     ".elasticbeanstalk.com",
+#     os.environ.get("DJANGO_ALLOWED_HOST", "localhost"),
+# ]
 
 # ALLOWED_HOSTS = ["*http://django-greatkart-env.eba-gg2rr5s6.us-west-2.elasticbeanstalk.com/, 127.0.0.1, localhost"]
 
