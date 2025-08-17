@@ -19,6 +19,7 @@ from django.urls import path, include
 from . import views
 from django.conf.urls.static import static
 from django.conf import settings
+from .views import health_check
 
 urlpatterns = [
     # path('admin/', views.fake_admin_login, name='fake_admin'),
@@ -31,4 +32,8 @@ urlpatterns = [
 
     # ORDERS
     path('orders/', include('orders.urls')),
+
+    #HEALTH
+    path("health/", health_check, name="health"),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

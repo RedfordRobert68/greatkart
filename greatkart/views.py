@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from store.models import Product, ReviewRating
+from django.http import JsonResponse
 
 
 def home(request):
@@ -15,3 +16,6 @@ def home(request):
     }
 
     return render(request, 'home.html', context)
+
+def health_check(request):
+    return JsonResponse({"status": "ok"})
