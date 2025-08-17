@@ -54,7 +54,7 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
 # Fallback: allow health checker & localhost
 if not ALLOWED_HOSTS or ALLOWED_HOSTS == ['']:
-    ALLOWED_HOSTS = ["*", "localhost", "127.0.0.1"]
+    ALLOWED_HOSTS = ["*"]
 
 # ALLOWED_HOSTS = [
 #     ".elasticbeanstalk.com",  # allows EB environment URL
