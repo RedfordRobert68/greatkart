@@ -45,7 +45,7 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY='same-origin-allow-popups'
 DEBUG = env('DEBUG')
 # DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
+ALLOWED_HOSTS = []
 
 
 # Application definition
