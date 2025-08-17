@@ -50,13 +50,18 @@ DEBUG = env.bool("DEBUG", default=False)
 # DEBUG = env('DEBUG')
 # DEBUG = config('DEBUG', default=True, cast=bool)
 
+ALLOWED_HOSTS = [
+    ".elasticbeanstalk.com",
+    os.environ.get("DJANGO_ALLOWED_HOST", "localhost"),
+]
+
 # ALLOWED_HOSTS = ["*http://django-greatkart-env.eba-gg2rr5s6.us-west-2.elasticbeanstalk.com/, 127.0.0.1, localhost"]
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[
-    "django-greatkart-env.eba-gg2rr5s6.us-west-2.elasticbeanstalk.com",
-    "127.0.0.1",
-    "localhost"
-])
+# ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[
+#     "django-greatkart-env.eba-gg2rr5s6.us-west-2.elasticbeanstalk.com",
+#     "127.0.0.1",
+#     "localhost"
+# ])
 
 
 # Application definition
