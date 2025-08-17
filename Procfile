@@ -1,1 +1,1 @@
-web: gunicorn greatkart.wsgi:application
+web: gunicorn --bind 0.0.0.0:8000 greatkart.wsgi:application
