@@ -16,7 +16,8 @@ from pathlib import Path
 import os
 import environ
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env(
     # set casting, default value
@@ -24,17 +25,20 @@ env = environ.Env(
 )
 
 # reading .env file
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+# environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+if os.path.isfile(os.path.join(BASE_DIR, ".env")):
+    environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+# BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = env("SECRET_KEY", default="fallback-secret")
+# SECRET_KEY = env('SECRET_KEY')
 # SECRET_KEY = config('SECRET_KEY')
 
 
@@ -42,10 +46,17 @@ SECRET_KEY = env('SECRET_KEY')
 SECURE_CROSS_ORIGIN_OPENER_POLICY='same-origin-allow-popups'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG')
+DEBUG = env.bool("DEBUG", default=False)
+# DEBUG = env('DEBUG')
 # DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ["*http://django-greatkart-env.eba-gg2rr5s6.us-west-2.elasticbeanstalk.com/, 127.0.0.1, localhost"]
+# ALLOWED_HOSTS = ["*http://django-greatkart-env.eba-gg2rr5s6.us-west-2.elasticbeanstalk.com/, 127.0.0.1, localhost"]
+
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[
+    "django-greatkart-env.eba-gg2rr5s6.us-west-2.elasticbeanstalk.com",
+    "127.0.0.1",
+    "localhost"
+])
 
 
 # Application definition
