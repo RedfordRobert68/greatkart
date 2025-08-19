@@ -37,3 +37,5 @@ urlpatterns = [
     path("health/", health_check, name="health"),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
