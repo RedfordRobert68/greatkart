@@ -46,7 +46,7 @@ SECRET_KEY = env("SECRET_KEY", default="fallback-secret")
 SECURE_CROSS_ORIGIN_OPENER_POLICY='same-origin-allow-popups'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool("DEBUG", default=False)
+DEBUG = env.bool("DEBUG", default=True)
 # DEBUG = env('DEBUG')
 # DEBUG = config('DEBUG', default=True, cast=bool)
 
