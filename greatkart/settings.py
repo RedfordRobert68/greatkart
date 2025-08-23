@@ -53,8 +53,10 @@ DEBUG = env.bool("DEBUG", default=True)
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
 # Fallback: allow health checker & localhost
-if not ALLOWED_HOSTS or ALLOWED_HOSTS == ['']:
-    ALLOWED_HOSTS = ["*"]
+# if not ALLOWED_HOSTS or ALLOWED_HOSTS == ['']:
+#     ALLOWED_HOSTS = ["*"]
+
+ALLOWED_HOSTS = ["*"]
 
 # ALLOWED_HOSTS = [
 #     ".elasticbeanstalk.com",  # allows EB environment URL
@@ -231,3 +233,22 @@ PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID', '')
 PAYPAL_SECRET_ID = os.environ.get('PAYPAL_SECRET_ID', '')
 
 # DEFAULT_AUTO_FIELD='django.db.models.AutoField'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    # 'handlers': {
+    #     'file': {
+    #         'level': 'ERROR',
+    #         'class': 'logging.FileHandler',
+    #         'filename': '/tmp/django_error.log',
+    #     },
+    # },
+    # 'loggers': {
+    #     'django': {
+    #         'handlers': ['file'],
+    #         'level': 'ERROR',
+    #         'propagate': True,
+    #     },
+    # },
+}
