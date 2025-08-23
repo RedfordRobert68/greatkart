@@ -50,13 +50,12 @@ DEBUG = env.bool("DEBUG", default=True)
 # DEBUG = env('DEBUG')
 # DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+ALLOWED_HOSTS = ['django-greatkart-env.eba-gg2rr5s6.us-west-2.elasticbeanstalk.com']
 
-# Fallback: allow health checker & localhost
-# if not ALLOWED_HOSTS or ALLOWED_HOSTS == ['']:
+# ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+
+# Fallback: allow health checker & localhost if not ALLOWED_HOSTS or ALLOWED_HOSTS == ['']:
 #     ALLOWED_HOSTS = ["*"]
-
-ALLOWED_HOSTS = ["*"]
 
 # ALLOWED_HOSTS = [
 #     ".elasticbeanstalk.com",  # allows EB environment URL
@@ -136,14 +135,8 @@ AUTH_USER_MODEL = 'accounts.Account'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': BASE_DIR / 'db.sqlite3',
-        'ENGINE': 'django.db.backends.postgresql',  # or 'django.db.backends.mysql'
-        'NAME': os.environ.get('RDS_DB_NAME'),
-        'USER': os.environ.get('RDS_USERNAME'),
-        'PASSWORD': os.environ.get('RDS_PASSWORD'),
-        'HOST': os.environ.get('RDS_HOSTNAME'),
-        'PORT': os.environ.get('RDS_PORT'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -239,22 +232,3 @@ PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID', '')
 PAYPAL_SECRET_ID = os.environ.get('PAYPAL_SECRET_ID', '')
 
 # DEFAULT_AUTO_FIELD='django.db.models.AutoField'
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    # 'handlers': {
-    #     'file': {
-    #         'level': 'ERROR',
-    #         'class': 'logging.FileHandler',
-    #         'filename': '/tmp/django_error.log',
-    #     },
-    # },
-    # 'loggers': {
-    #     'django': {
-    #         'handlers': ['file'],
-    #         'level': 'ERROR',
-    #         'propagate': True,
-    #     },
-    # },
-}
