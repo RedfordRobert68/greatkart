@@ -46,15 +46,15 @@ SECRET_KEY = env("SECRET_KEY", default="fallback-secret")
 SECURE_CROSS_ORIGIN_OPENER_POLICY='same-origin-allow-popups'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = env.bool("DEBUG", default=True)
-# # DEBUG = env('DEBUG')
-# # DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = env.bool("DEBUG", default=True)
+# DEBUG = env('DEBUG')
+# DEBUG = config('DEBUG', default=True, cast=bool)
 
-# ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
-# # Fallback: allow health checker & localhost
-# if not ALLOWED_HOSTS or ALLOWED_HOSTS == ['']:
-#     ALLOWED_HOSTS = ["*"]
+# Fallback: allow health checker & localhost
+if not ALLOWED_HOSTS or ALLOWED_HOSTS == ['']:
+    ALLOWED_HOSTS = ["*"]
 
 # ALLOWED_HOSTS = [
 #     ".elasticbeanstalk.com",  # allows EB environment URL
@@ -68,7 +68,7 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY='same-origin-allow-popups'
 #     os.environ.get("DJANGO_ALLOWED_HOST", "localhost"),
 # ]
 
-ALLOWED_HOSTS = ["http://django-greatkart-env.eba-gg2rr5s6.us-west-2.elasticbeanstalk.com/, 127.0.0.1, localhost:8000"]
+# ALLOWED_HOSTS = ["*http://django-greatkart-env.eba-gg2rr5s6.us-west-2.elasticbeanstalk.com/, 127.0.0.1, localhost"]
 
 # ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[
 #     "django-greatkart-env.eba-gg2rr5s6.us-west-2.elasticbeanstalk.com",
